@@ -118,14 +118,7 @@
     );
     if (!title) return;
 
-    const containerTop = modalSections.getBoundingClientRect().top;
-    const titleTop = title.getBoundingClientRect().top;
-    const scrollOffset = modalSections.scrollTop + (titleTop - containerTop);
-
-    modalSections.scrollTo({
-      top: scrollOffset,
-      behavior: "smooth",
-    });
+    title.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function setupImageFallback(img, project) {
@@ -336,6 +329,7 @@
     modalGrade.textContent = project.grade || "未設定";
     modalSections.innerHTML = renderModalSections(project);
     modalToc.innerHTML = renderModalToc(project);
+    modal.querySelector(".modal__content").scrollTop = 0;
     modalSections.scrollTop = 0;
     modalGithub.href = project.github;
     modalGithub.querySelector(".visually-hidden")?.remove();

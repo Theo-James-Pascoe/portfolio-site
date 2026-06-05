@@ -751,32 +751,6 @@ a:hover {
   }
 }
 
-@media (max-width: 639px) {
-  .modal__content {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-  }
-
-  .modal__tags,
-  .modal__title,
-  .modal__github,
-  .modal__meta,
-  .modal__image-wrap,
-  .modal__image-aside,
-  .modal__sections {
-    grid-column: 1;
-    grid-row: auto;
-  }
-
-  .modal__image-wrap {
-    width: 100%;
-    height: clamp(140px, 24vh, 220px);
-  }
-
-  .modal__sections {
-    max-height: min(40vh, 320px);
-  }
-}
 
 .modal__tags {
   display: flex;
@@ -810,17 +784,56 @@ a:hover {
 
 .modal__sections {
   display: flex;
-  grid-column: 1;
-  grid-row: 5;
-  align-self: stretch;
   flex-direction: column;
   gap: 1.5rem;
-  min-height: 0;
-  max-height: 100%;
   padding-top: 0.25rem;
   padding-right: 0.25rem;
-  overflow-y: auto;
-  overscroll-behavior: contain;
+}
+
+@media (min-width: 640px) {
+  .modal__sections {
+    grid-column: 1;
+    grid-row: 5;
+    align-self: stretch;
+    min-height: 0;
+    max-height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
+@media (max-width: 639px) {
+  .modal__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+  }
+
+  .modal__image-wrap {
+    width: 100%;
+    height: clamp(140px, 24vh, 220px);
+    flex-shrink: 0;
+  }
+
+  .modal__image-aside {
+    flex-shrink: 0;
+  }
+
+  .modal__sections {
+    flex-shrink: 0;
+    max-height: none;
+    min-height: auto;
+    overflow: visible;
+  }
+
+  .modal__section-title {
+    scroll-margin-top: 3rem;
+  }
 }
 
 .modal__section {

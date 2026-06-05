@@ -68,54 +68,161 @@
           <span aria-hidden="true">&times;</span>
         </button>
         <div class="modal__content">
-          <div class="modal__top">
-            <ul
-              id="modal-tags"
-              class="modal__tags"
-              aria-label="使用技術"
-            ></ul>
-            <h2 id="modal-title" class="modal__title"></h2>
-            <a
-              id="modal-github"
-              class="modal__github"
-              href="#"
-              target="_blank"
-              rel="noopener noreferrer"
+          <ul
+            id="modal-tags"
+            class="modal__tags"
+            aria-label="使用技術"
+          ></ul>
+          <h2 id="modal-title" class="modal__title"></h2>
+          <a
+            id="modal-github"
+            class="modal__github"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg
+              class="modal__github-icon"
+              viewBox="0 0 16 16"
+              width="16"
+              height="16"
+              aria-hidden="true"
             >
-              <svg
-                class="modal__github-icon"
-                viewBox="0 0 16 16"
-                width="16"
-                height="16"
-                aria-hidden="true"
-              >
-                <path
-                  fill="currentColor"
-                  d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.55 7.55 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"
-                />
-              </svg>
-              <span>GitHub で見る</span>
-            </a>
-            <dl class="modal__meta">
-              <dt>開発期間</dt>
-              <dd id="modal-dev-time"></dd>
-              <dt>開発人数</dt>
-              <dd id="modal-developer-count"></dd>
-              <dt>評価</dt>
-              <dd id="modal-grade"></dd>
-            </dl>
-            <div class="modal__image-wrap">
-              <img
-                id="modal-image"
-                class="modal__image"
-                src=""
-                alt=""
-                width="800"
-                height="450"
+              <path
+                fill="currentColor"
+                d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.55 7.55 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"
               />
+            </svg>
+            <span>GitHub で見る</span>
+          </a>
+          <dl class="modal__meta">
+            <dt>評価</dt>
+            <dd id="modal-grade"></dd>
+          </dl>
+          <div class="modal__image-wrap">
+            <div class="modal__carousel" id="modal-carousel">
+              <button
+                type="button"
+                class="modal__carousel-btn modal__carousel-btn--prev"
+                id="modal-carousel-prev"
+                aria-label="前の画像"
+                hidden
+              >
+                <span aria-hidden="true">&#8249;</span>
+              </button>
+              <button
+                type="button"
+                class="modal__image-btn"
+                id="modal-image-open"
+                aria-label="画像を拡大表示"
+              >
+                <img
+                  id="modal-image"
+                  class="modal__image"
+                  src=""
+                  alt=""
+                  width="800"
+                  height="450"
+                />
+                <span class="modal__image-zoom-icon" aria-hidden="true">
+                  <svg
+                    class="modal__image-zoom-icon-svg"
+                    viewBox="0 0 24 24"
+                    width="18"
+                    height="18"
+                  >
+                    <circle
+                      cx="10.5"
+                      cy="10.5"
+                      r="6.5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    />
+                    <path
+                      d="M15.5 15.5L20 20"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                    />
+                    <path
+                      d="M7.5 10.5H13.5M10.5 7.5V13.5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </span>
+              </button>
+              <button
+                type="button"
+                class="modal__carousel-btn modal__carousel-btn--next"
+                id="modal-carousel-next"
+                aria-label="次の画像"
+                hidden
+              >
+                <span aria-hidden="true">&#8250;</span>
+              </button>
+              <div
+                id="modal-carousel-dots"
+                class="modal__carousel-dots"
+                role="tablist"
+                aria-label="スクリーンショット"
+                hidden
+              ></div>
+              <p
+                id="modal-carousel-status"
+                class="visually-hidden"
+                aria-live="polite"
+              ></p>
             </div>
           </div>
-          <p id="modal-description" class="modal__description"></p>
+          <div class="modal__image-aside">
+            <div class="modal__image-caption-wrap">
+              <p id="modal-image-caption" class="modal__image-caption"></p>
+            </div>
+            <nav id="modal-toc" class="modal__toc" aria-label="目次"></nav>
+          </div>
+          <div id="modal-sections" class="modal__sections"></div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="image-lightbox"
+      class="image-lightbox"
+      hidden
+      aria-hidden="true"
+    >
+      <div
+        class="image-lightbox__backdrop"
+        data-image-lightbox-close
+        tabindex="-1"
+      ></div>
+      <div
+        class="image-lightbox__dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-label="拡大画像"
+      >
+        <button
+          type="button"
+          class="image-lightbox__close"
+          data-image-lightbox-close
+          aria-label="閉じる"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <div class="image-lightbox__content">
+          <img
+            id="image-lightbox-img"
+            class="image-lightbox__image"
+            src=""
+            alt=""
+          />
+          <p id="image-lightbox-caption" class="image-lightbox__caption"></p>
         </div>
       </div>
     </div>
@@ -124,11 +231,25 @@
       <p>
         <a
           id="footer-github"
+          class="site-footer__github"
           href="https://github.com/YOUR_USERNAME"
           target="_blank"
           rel="noopener noreferrer"
-          >GitHub</a
         >
+          <svg
+            class="site-footer__github-icon"
+            viewBox="0 0 16 16"
+            width="16"
+            height="16"
+            aria-hidden="true"
+          >
+            <path
+              fill="currentColor"
+              d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.55 7.55 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"
+            />
+          </svg>
+          <span>GitHub</span>
+        </a>
       </p>
     </footer>
 

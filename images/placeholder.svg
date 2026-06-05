@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450" role="img" aria-label="画像未設定">
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#181825"/>
-      <stop offset="100%" style="stop-color:#313244"/>
+      <stop offset="0%" style="stop-color:#e6e9ef"/>
+      <stop offset="100%" style="stop-color:#ccd0da"/>
     </linearGradient>
   </defs>
   <rect width="800" height="450" fill="url(#bg)"/>
-  <text x="400" y="220" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" fill="#a6adc8">画像を追加してください</text>
-  <text x="400" y="250" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" fill="#6c7086">images/project-XX.jpg</text>
+  <text x="400" y="220" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" fill="#6c6f85">画像を追加してください</text>
+  <text x="400" y="250" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" fill="#9ca0b0">images/project-XX.jpg</text>
 </svg>

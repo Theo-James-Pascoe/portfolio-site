@@ -3,7 +3,6 @@
   const filterOptions = document.getElementById("tag-filter-options");
   const filterStatus = document.getElementById("filter-status");
   const noResults = document.getElementById("no-results");
-  const footerLink = document.getElementById("footer-github");
 
   const modal = document.getElementById("project-modal");
   const modalImage = document.getElementById("modal-image");
@@ -14,6 +13,22 @@
   const modalImageCaption = document.getElementById("modal-image-caption");
   const modalImageCaptionWrap = document.querySelector(".modal__image-caption-wrap");
   const modalGithub = document.getElementById("modal-github");
+  const modalGithubIcon = modalGithub?.querySelector(".modal__github-icon");
+  const modalGithubLabel = document.getElementById("modal-github-label");
+
+  const MODAL_LINK_DEFAULTS = {
+    label: "GitHub で見る",
+    icon: "github",
+  };
+
+  const MODAL_LINK_ICON_PATHS = {
+    github:
+      "M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.55 7.55 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z",
+    external: [
+      "M11 1h4v4h-1.5V3.56L6.73 9.32 6.02 8.61 12.44 2.5H11V1z",
+      "M3 3h6v1.5H4.5V12.5H12V9H13.5v6H3V3z",
+    ],
+  };
   const modalGrade = document.getElementById("modal-grade");
   const modalImageOpen = document.getElementById("modal-image-open");
   const modalCarouselPrev = document.getElementById("modal-carousel-prev");
@@ -30,10 +45,6 @@
   let lastImageLightboxFocusedElement = null;
   let activeModalProject = null;
   let carouselIndex = 0;
-
-  if (footerLink && typeof PROFILE_GITHUB === "string") {
-    footerLink.href = PROFILE_GITHUB;
-  }
 
   function getTagClass(tag) {
     return `tag-${getTagSlug(tag)}`;
@@ -76,24 +87,156 @@
     return project.sections || DEFAULT_SECTIONS;
   }
 
+  function parseSectionParagraphs(text) {
+    if (!text) return [];
+    return text
+      .split(/\n\n+/)
+      .map((paragraph) => paragraph.trim())
+      .filter((paragraph) => paragraph.length > 0);
+  }
+
+  function getParagraphSubheads(trimmed, sectionIndex, paragraphIndex) {
+    const subheads = [];
+    const standaloneSubhead = trimmed.match(/^\*\*([^*]+)\*\*$/);
+
+    if (standaloneSubhead) {
+      subheads.push({
+        id: `modal-section-${sectionIndex}-sub-${paragraphIndex}`,
+        label: standaloneSubhead[1],
+        inline: false,
+      });
+      return subheads;
+    }
+
+    trimmed
+      .split(/(\*\*[^*]+\*\*)/g)
+      .filter((part) => part.length > 0)
+      .forEach((part, partIndex) => {
+        const boldMatch = part.match(/^\*\*([^*]+)\*\*$/);
+        if (boldMatch) {
+          subheads.push({
+            id: `modal-section-${sectionIndex}-sub-${paragraphIndex}-${partIndex}`,
+            label: boldMatch[1],
+            inline: true,
+          });
+        }
+      });
+
+    return subheads;
+  }
+
+  function getSectionSubheads(text, sectionIndex) {
+    return parseSectionParagraphs(text).flatMap((paragraph, paragraphIndex) =>
+      getParagraphSubheads(paragraph, sectionIndex, paragraphIndex)
+    );
+  }
+
+  function renderSectionText(text, sectionIndex) {
+    if (!text) return "";
+
+    return parseSectionParagraphs(text)
+      .map((trimmed, paragraphIndex) => {
+        const subheads = getParagraphSubheads(trimmed, sectionIndex, paragraphIndex);
+
+        if (subheads.length === 1 && !subheads[0].inline) {
+          const subhead = subheads[0];
+          return `<h4 class="modal__section-subhead" id="${subhead.id}">${escapeHtml(subhead.label)}</h4>`;
+        }
+
+        const parts = trimmed
+          .split(/(\*\*[^*]+\*\*)/g)
+          .filter((part) => part.length > 0);
+
+        if (parts.length === 0) return "";
+
+        const inner = parts
+          .map((part, partIndex) => {
+            const boldMatch = part.match(/^\*\*([^*]+)\*\*$/);
+            if (boldMatch) {
+              const subId = `modal-section-${sectionIndex}-sub-${paragraphIndex}-${partIndex}`;
+              return `<strong class="modal__section-subhead modal__section-subhead--inline" id="${subId}">${escapeHtml(boldMatch[1])}</strong>`;
+            }
+            return escapeHtml(part);
+          })
+          .join("");
+
+        return `<p class="modal__section-paragraph">${inner}</p>`;
+      })
+      .join("");
+  }
+
   function renderModalSections(project) {
     return getProjectSections(project)
       .map(
         (section, index) => `
           <section class="modal__section" id="modal-section-${index}">
             <h3 class="modal__section-title">${escapeHtml(section.heading)}</h3>
-            <p class="modal__section-text">${escapeHtml(section.text)}</p>
+            <div class="modal__section-body">${renderSectionText(section.text, index)}</div>
           </section>
         `
       )
       .join("");
   }
 
+  function getModalScrollContainer() {
+    if (!modal) return null;
+
+    if (window.matchMedia("(max-width: 639px)").matches) {
+      return modal.querySelector(".modal__content");
+    }
+
+    return modalSections;
+  }
+
+  function scrollElementInModal(target) {
+    if (!target) return;
+
+    const scrollContainer = getModalScrollContainer();
+    if (!scrollContainer) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+
+    const containerTop = scrollContainer.getBoundingClientRect().top;
+    const targetTop = target.getBoundingClientRect().top;
+    const scrollOffset = scrollContainer.scrollTop + (targetTop - containerTop);
+
+    scrollContainer.scrollTo({
+      top: scrollOffset,
+      behavior: "smooth",
+    });
+  }
+
+  function scrollToSubhead(subheadId) {
+    scrollElementInModal(document.getElementById(subheadId));
+  }
+
   function renderModalToc(project) {
     const items = getProjectSections(project)
-      .map(
-        (section, index) => `
-          <li>
+      .map((section, index) => {
+        const subheads = getSectionSubheads(section.text, index);
+        const subItems = subheads
+          .map(
+            (subhead) => `
+              <li>
+                <button
+                  type="button"
+                  class="modal__toc-link modal__toc-link--sub"
+                  data-subhead="${subhead.id}"
+                >
+                  ${escapeHtml(subhead.label)}
+                </button>
+              </li>
+            `
+          )
+          .join("");
+
+        const subList = subheads.length
+          ? `<ul class="modal__toc-sublist">${subItems}</ul>`
+          : "";
+
+        return `
+          <li class="modal__toc-item">
             <button
               type="button"
               class="modal__toc-link"
@@ -101,9 +244,10 @@
             >
               ${escapeHtml(section.heading)}
             </button>
+            ${subList}
           </li>
-        `
-      )
+        `;
+      })
       .join("");
 
     return `
@@ -116,9 +260,29 @@
     const title = modalSections.querySelector(
       `#modal-section-${index} .modal__section-title`
     );
-    if (!title) return;
+    scrollElementInModal(title);
+  }
 
-    title.scrollIntoView({ behavior: "smooth", block: "start" });
+  function setupModalLink(project) {
+    if (!modalGithub) return;
+
+    const label = project.linkLabel || MODAL_LINK_DEFAULTS.label;
+    const iconType = project.linkIcon || MODAL_LINK_DEFAULTS.icon;
+    const iconPaths =
+      MODAL_LINK_ICON_PATHS[iconType] || MODAL_LINK_ICON_PATHS.github;
+
+    modalGithub.href = project.github;
+
+    if (modalGithubLabel) {
+      modalGithubLabel.textContent = label;
+    }
+
+    if (modalGithubIcon) {
+      const paths = Array.isArray(iconPaths) ? iconPaths : [iconPaths];
+      modalGithubIcon.innerHTML = paths
+        .map((path) => `<path fill="currentColor" d="${path}"></path>`)
+        .join("");
+    }
   }
 
   function setupImageFallback(img, project) {
@@ -331,7 +495,7 @@
     modalToc.innerHTML = renderModalToc(project);
     modal.querySelector(".modal__content").scrollTop = 0;
     modalSections.scrollTop = 0;
-    modalGithub.href = project.github;
+    setupModalLink(project);
     modalGithub.querySelector(".visually-hidden")?.remove();
     const hiddenLabel = document.createElement("span");
     hiddenLabel.className = "visually-hidden";
@@ -405,7 +569,18 @@
 
   function initModal() {
     modal.addEventListener("click", (event) => {
-      const tocLink = event.target.closest(".modal__toc-link");
+      const tocSubLink = event.target.closest(
+        ".modal__toc-link--sub[data-subhead]"
+      );
+      if (tocSubLink) {
+        event.preventDefault();
+        scrollToSubhead(tocSubLink.dataset.subhead);
+        return;
+      }
+
+      const tocLink = event.target.closest(
+        ".modal__toc-link[data-section-index]"
+      );
       if (tocLink) {
         scrollToModalSection(Number(tocLink.dataset.sectionIndex));
         return;

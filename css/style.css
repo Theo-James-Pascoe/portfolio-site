@@ -118,6 +118,7 @@ a:hover {
   font-family: var(--font-mono);
   font-size: 0.875rem;
   letter-spacing: 0.12em;
+  text-align: center;
   text-transform: uppercase;
   color: var(--ctp-mauve);
 }
@@ -127,13 +128,15 @@ a:hover {
   font-size: clamp(1.75rem, 4vw, 2.5rem);
   font-weight: 700;
   line-height: 1.3;
+  text-align: center;
   color: var(--ctp-text);
 }
 
 .site-header__lead {
-  margin: 0;
+  margin: 0 auto;
   max-width: 42rem;
   font-size: 1.05rem;
+  text-align: center;
   color: var(--ctp-subtext1);
 }
 
@@ -693,14 +696,19 @@ a:hover {
 }
 
 .modal__toc {
+  display: flex;
+  flex-direction: column;
   margin: 0;
   padding: 0.75rem 0.875rem;
+  min-height: 0;
+  overflow: hidden;
   background: var(--ctp-mantle);
   border: 1px solid var(--ctp-surface1);
   border-radius: 10px;
 }
 
 .modal__toc-title {
+  flex-shrink: 0;
   margin: 0 0 0.5rem;
   font-size: 0.8125rem;
   font-weight: 700;
@@ -715,6 +723,22 @@ a:hover {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+  min-height: 0;
+}
+
+.modal__toc-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.modal__toc-sublist {
+  margin: 0;
+  padding: 0 0 0 0.85rem;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
 }
 
 .modal__toc-link {
@@ -743,6 +767,17 @@ a:hover {
 .modal__toc-link:focus-visible {
   outline: 2px solid var(--ctp-blue);
   outline-offset: 2px;
+}
+
+.modal__toc-link--sub {
+  font-size: 0.75rem;
+  font-weight: 400;
+  padding: 0.35rem 0.5rem;
+  color: var(--ctp-subtext0);
+}
+
+.modal__toc-link--sub:hover {
+  color: var(--ctp-blue);
 }
 
 @media (min-width: 640px) {
@@ -791,6 +826,26 @@ a:hover {
 }
 
 @media (min-width: 640px) {
+  .modal__image-aside {
+    align-self: start;
+    min-height: 0;
+    max-height: 100%;
+  }
+
+  .modal__toc {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  .modal__toc-list {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding-right: 0.15rem;
+    max-height: min(50vh, 28rem);
+  }
+
   .modal__sections {
     grid-column: 1;
     grid-row: 5;
@@ -824,6 +879,19 @@ a:hover {
     flex-shrink: 0;
   }
 
+  .modal__toc {
+    flex: 0 0 auto;
+    max-height: min(42vh, 320px);
+  }
+
+  .modal__toc-list {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding-right: 0.15rem;
+  }
+
   .modal__sections {
     flex-shrink: 0;
     max-height: none;
@@ -850,13 +918,37 @@ a:hover {
   color: var(--ctp-text);
 }
 
-.modal__section-text {
-  margin: 0;
+.modal__section-body {
   font-size: 0.9375rem;
   font-weight: 400;
   line-height: 1.75;
   color: var(--ctp-subtext1);
-  white-space: pre-line;
+}
+
+.modal__section-paragraph {
+  margin: 0 0 1rem;
+}
+
+.modal__section-paragraph:last-child {
+  margin-bottom: 0;
+}
+
+.modal__section-subhead {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--ctp-text);
+  scroll-margin-top: 3rem;
+}
+
+.modal__section-subhead:first-child {
+  margin-top: 0;
+}
+
+.modal__section-subhead--inline {
+  font-weight: 700;
+  color: var(--ctp-text);
 }
 
 .modal__github {
@@ -915,38 +1007,6 @@ a:hover {
   margin: 0;
   font-size: 0.8125rem;
   color: var(--ctp-text);
-}
-
-/* --- Footer --- */
-.site-footer {
-  padding: 2rem 1.5rem;
-  text-align: center;
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  border-top: 1px solid var(--color-border);
-  background: var(--ctp-crust);
-}
-
-.site-footer p {
-  margin: 0;
-}
-
-.site-footer__github {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  font-weight: 500;
-  text-decoration: none;
-  color: var(--ctp-blue);
-}
-
-.site-footer__github:hover {
-  color: var(--ctp-mauve);
-  text-decoration: underline;
-}
-
-.site-footer__github-icon {
-  flex-shrink: 0;
 }
 
 /* --- Tag-specific colors (filter chips, card tags, modal tags) --- */

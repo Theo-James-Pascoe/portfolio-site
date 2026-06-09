@@ -347,10 +347,14 @@ a:hover {
   backdrop-filter: blur(4px);
 }
 
-.project-card__image {
+.project-card__image,
+.project-card__video {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
+  pointer-events: none;
 }
 
 .project-card__body {
@@ -524,18 +528,22 @@ a:hover {
 .modal__image-wrap {
   grid-column: 2;
   grid-row: 2 / 5;
-  align-self: stretch;
+  position: relative;
+  align-self: start;
   width: 100%;
+  aspect-ratio: 16 / 9;
   min-height: 0;
   margin: 0;
   border: 1px solid var(--ctp-surface2);
   border-radius: 10px;
   overflow: hidden;
   background: var(--ctp-mantle);
+  contain: layout size;
 }
 
 .modal__carousel {
-  position: relative;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   min-height: 0;
@@ -621,7 +629,8 @@ a:hover {
 }
 
 .modal__image-btn {
-  position: relative;
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
@@ -630,6 +639,7 @@ a:hover {
   background: transparent;
   cursor: zoom-in;
   transition: opacity var(--transition);
+  overflow: hidden;
 }
 
 .modal__image-btn:hover {
@@ -641,11 +651,27 @@ a:hover {
   outline-offset: -2px;
 }
 
-.modal__image {
+.modal__image:not([hidden]),
+.modal__video:not([hidden]) {
+  position: absolute;
+  inset: 0;
+  display: block;
   width: 100%;
   height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: cover;
+  object-position: center;
   pointer-events: none;
+}
+
+.modal__image[hidden],
+.modal__video[hidden] {
+  display: none;
+}
+
+.modal__image-btn.is-video {
+  cursor: pointer;
 }
 
 .modal__image-zoom-icon {
@@ -665,7 +691,31 @@ a:hover {
   pointer-events: none;
 }
 
-.modal__image-zoom-icon-svg {
+.modal__image-play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  color: var(--ctp-text);
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 2px 8px rgba(76, 79, 105, 0.18));
+  pointer-events: none;
+}
+
+.modal__image-btn.is-video .modal__image-zoom-icon {
+  display: none;
+}
+
+.modal__image-btn.is-video .modal__image-play-icon {
+  display: flex;
+}
+
+.modal__image-zoom-icon-svg,
+.modal__image-play-icon-svg {
   display: block;
 }
 
@@ -692,6 +742,7 @@ a:hover {
   font-size: 0.8125rem;
   font-style: italic;
   line-height: 1.65;
+  white-space: pre-line;
   color: var(--ctp-subtext1);
 }
 
@@ -872,6 +923,7 @@ a:hover {
   .modal__image-wrap {
     width: 100%;
     height: clamp(140px, 24vh, 220px);
+    aspect-ratio: auto;
     flex-shrink: 0;
   }
 
@@ -1192,13 +1244,23 @@ a:hover {
   outline-offset: 2px;
 }
 
-.image-lightbox__image {
+.image-lightbox__image:not([hidden]),
+.image-lightbox__video:not([hidden]) {
   display: block;
   max-width: min(88vw, 1360px);
   max-height: calc(90vh - 7rem);
   width: auto;
   height: auto;
   object-fit: contain;
+}
+
+.image-lightbox__image[hidden],
+.image-lightbox__video[hidden] {
+  display: none;
+}
+
+.image-lightbox__video:not([hidden]) {
+  background: #000000;
 }
 
 .image-lightbox__caption {
@@ -1208,6 +1270,7 @@ a:hover {
   font-size: 0.875rem;
   font-style: italic;
   line-height: 1.65;
+  white-space: pre-line;
   text-align: center;
   color: var(--ctp-subtext1);
 }

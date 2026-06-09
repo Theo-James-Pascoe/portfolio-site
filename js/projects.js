@@ -11,6 +11,31 @@
 const DEFAULT_IMAGE_DESCRIPTION =
   "ここに画像の説明文を記載してください。スクリーンショットの内容、画面の見どころ、デモで確認できる機能などを簡潔に書くと効果的です。";
 
+function carouselDescriptionForIndex(index) {
+  if (index === 0) return DEFAULT_IMAGE_DESCRIPTION;
+  return `${index + 1}枚目のスクリーンショットの説明をここに記載してください。`;
+}
+
+function projectThumbnailPath(projectNumber, file) {
+  return `images/Project ${projectNumber}/${file}`;
+}
+
+function createCarouselMediaFromFolder(projectNumber, entries) {
+  const folder = `Project ${projectNumber}`;
+  return entries.map(({ file, description }) => {
+    const slide = {
+      src: `images/${folder}/${file}`,
+      description,
+    };
+
+    if (/\.(mp4|webm|ogg)$/i.test(file)) {
+      slide.type = "video";
+    }
+
+    return slide;
+  });
+}
+
 function createProjectImages(primaryImage) {
   return [
     { src: primaryImage, description: DEFAULT_IMAGE_DESCRIPTION },
@@ -92,8 +117,29 @@ const PROJECTS = [
     ],
     grade: "80点（優）",
     tags: ["独自開発", "C++"],
-    image: "images/project-02.jpg",
-    images: createProjectImages("images/project-02.jpg"),
+    image: projectThumbnailPath(1, "P1-2.png"),
+    images: createCarouselMediaFromFolder(1, [
+      {
+        file: "P1-1.png",
+        description:
+          "2014年3月の風速データを対象に、平均値および標本標準偏差を算出している様子。",
+      },
+      {
+        file: "P1-2.png",
+        description:
+          "2014年の気温データを対象に、月ごとの平均値および標本標準偏差を算出している様子。",
+      },
+      {
+        file: "P1-3.png",
+        description:
+          "全観測年の3月データを対象に、各測定項目間の標本ピアソン相関係数を算出している様子。",
+      },
+      {
+        file: "P1-4.png",
+        description:
+          "2014年の統計分析結果を、大学が指定した形式でファイルへ出力した例。",
+      },
+    ]),
     github: "https://github.com/YOUR_USERNAME/project-2",
   },
   {
@@ -130,8 +176,19 @@ const PROJECTS = [
     ],
     grade: "80点（優）",
     tags: ["チーム開発", "C", "UNIX"],
-    image: "images/project-03.jpg",
-    images: createProjectImages("images/project-03.jpg"),
+    image: projectThumbnailPath(2, "P2-1.png"),
+    images: createCarouselMediaFromFolder(2, [
+      {
+        file: "P2-1.png",
+        description:
+          "自作シェル上で、echo コマンド、ワイルドカード展開を用いた .c ファイル一覧表示、および標準出力リダイレクトを組み合わせて実行している様子。右側にはリダイレクトによって生成されたテキストファイルの内容を表示。",
+      },
+      {
+        file: "P2-2.png",
+        description:
+          "リモートアクセス機能の動作例。認証を行った2台のクライアントがサーバーへ同時接続し、それぞれ独立したシェルセッションを利用している様子。",
+      },
+    ]),
     github: "https://github.com/YOUR_USERNAME/project-3",
   },
   {
@@ -168,8 +225,24 @@ const PROJECTS = [
     ],
     grade: "96点（秀）",
     tags: ["チーム開発", "進行管理"],
-    image: "images/project-05.jpg",
-    images: createProjectImages("images/project-05.jpg"),
+    image: projectThumbnailPath(3, "P3-1.png"),
+    images: createCarouselMediaFromFolder(3, [
+      {
+        file: "P3-1.png",
+        description:
+          "ログイン後に表示されるアプリケーションのホーム画面。画像のアップロード、過去の識別結果の確認、撮影ガイドの閲覧などの主要機能へアクセスできる。",
+      },
+      {
+        file: "P3-2.png",
+        description:
+          "ユーザーがアップロードした画像の識別結果一覧画面。赤字は外来種が検出されたことを示しており、画面上部のフィルターからアップロード日時や検出種別による絞り込みが可能。",
+      },
+      {
+        file: "P3-3.png",
+        description:
+          "識別結果の詳細表示例。赤枠はAIによって検出された対象種を示しており、下部には種名と識別信頼度（確信度）が表示される。",
+      },
+    ]),
     github: "https://YOUR_PUBLIC_TEST_URL",
     linkLabel: "公開テストへ",
     linkIcon: "external",
@@ -208,8 +281,14 @@ const PROJECTS = [
     ],
     grade: "90点（秀）",
     tags: ["独自開発", "Assembly"],
-    image: "images/project-04.jpg",
-    images: createProjectImages("images/project-04.jpg"),
+    image: projectThumbnailPath(4, "P4-1.mp4"),
+    images: createCarouselMediaFromFolder(4, [
+      {
+        file: "P4-1.mp4",
+        description:
+          "プロジェクトの動作デモ動画。入力値として「1秒」「2分」「1時」を指定し、時計を12時間分の時間経過が確認できる速度で動作させている。\n\nまた、課題仕様に従い、開始時刻から12時間後の時刻は表示せず、その1秒前の時刻で表示を終了している。\n\nなお、本プログラムは12時間表記で動作するため、終了時の時刻は13時ではなく1時として表示される。",
+      },
+    ]),
     github: "https://github.com/YOUR_USERNAME/project-4",
   },
   {
@@ -241,8 +320,24 @@ const PROJECTS = [
     ],
     grade: "100点（秀）",
     tags: ["独自開発", "AI開発", "Python"],
-    image: "images/project-06.jpg",
-    images: createProjectImages("images/project-06.jpg"),
+    image: projectThumbnailPath(5, "P5-3.png"),
+    images: createCarouselMediaFromFolder(5, [
+      {
+        file: "P5-1.png",
+        description:
+          "AIが分類対象とする衣類画像の例。左上から右下へ順に、アクセサリー、ジャケット、シャツ、ショートパンツ、ジーンズ、ニットウェア、シューズ、Tシャツ。",
+      },
+      {
+        file: "P5-2.png",
+        description:
+          "AI開発時に活用した混同行列（Confusion Matrix）の例。縦軸は実際の分類、横軸はAIによる予測結果を表している。\n\n例えば、この試行ではジーンズの画像2件がシャツと誤分類された一方で、シューズは96件が正しく分類された。",
+      },
+      {
+        file: "P5-3.png",
+        description:
+          "TensorBoardを用いて複数モデルの学習損失（Training Loss）および検証損失（Validation Loss）を比較している様子。ハイパーパラメータ調整による学習挙動の変化を分析するために活用した。",
+      },
+    ]),
     github: "https://github.com/YOUR_USERNAME/project-6",
   },
   {
@@ -274,8 +369,49 @@ const PROJECTS = [
     ],
     grade: "100点（秀）",
     tags: ["独自開発", "AI開発", "Python"],
-    image: "images/project-01.jpg",
-    images: createProjectImages("images/project-01.jpg"),
+    image: projectThumbnailPath(6, "P6-8.png"),
+    images: createCarouselMediaFromFolder(6, [
+      {
+        file: "P6-1.jpg",
+        description:
+          "腫瘍が存在しない脳MRI画像の例。AIはこのような画像を「No Tumor」として分類する。",
+      },
+      {
+        file: "P6-2.jpg",
+        description:
+          "脳の右側に神経膠腫（Glioma）が存在する脳MRI画像の例。",
+      },
+      {
+        file: "P6-3.jpg",
+        description:
+          "脳の左側に髄膜腫（Meningioma）が存在する脳MRI画像の例。",
+      },
+      {
+        file: "P6-4.jpg",
+        description:
+          "脳の中央付近に下垂体腫瘍（Pituitary Tumor）が存在する脳MRI画像の例。",
+      },
+      {
+        file: "P6-5.png",
+        description:
+          "AI開発時に活用した混同行列（Confusion Matrix）の例。縦軸はAIによる予測結果、横軸は実際の分類を表している。\n\n例えば、この試行では下垂体腫瘍の1%が髄膜腫と誤分類された一方で、神経膠腫は91%が正しく分類された。",
+      },
+      {
+        file: "P6-6.png",
+        description:
+          "TensorBoardを用いて複数モデルのmAP50-95（Mean Average Precision）を比較している様子。モデルごとの検出性能を評価するために活用した。",
+      },
+      {
+        file: "P6-7.png",
+        description:
+          "モデル学習時に出力された学習指標の推移。損失関数、Precision、Recall、mAPなどの変化を確認しながらモデル性能の分析と改善を行った。",
+      },
+      {
+        file: "P6-8.png",
+        description:
+          "AIによる検出結果の例。枠線は腫瘍が検出された領域を示しており、ラベルには腫瘍の種類、数値には0から1の範囲で表された識別信頼度が表示されている。",
+      },
+    ]),
     github: "https://github.com/YOUR_USERNAME/project-1",
   },
   {
@@ -307,8 +443,64 @@ const PROJECTS = [
     ],
     grade: "77点（良）",
     tags: ["独自開発", "Java"],
-    image: "images/project-08.jpg",
-    images: createProjectImages("images/project-08.jpg"),
+    image: projectThumbnailPath(7, "P7-5.png"),
+    images: createCarouselMediaFromFolder(7, [
+      {
+        file: "P7-1.png",
+        description:
+          "アプリケーション起動時に表示されるメニュー画面。新規雑誌サービスの作成、既存サービスの編集、サービス情報の閲覧、およびサンプルデータの読み込みが可能。",
+      },
+      {
+        file: "P7-2.png",
+        description:
+          "雑誌サービス作成画面。ここでは週額500円の雑誌サービスを作成している。",
+      },
+      {
+        file: "P7-3.png",
+        description:
+          "付録（Supplement）作成画面。既存のビタミンCに加え、週額700円のビタミンD付録を作成している。",
+      },
+      {
+        file: "P7-4.png",
+        description:
+          "顧客作成画面。田中一郎さんを新規顧客として登録し、ビタミンD付録を購読している例。田中さんは自身の購読料金を支払う「Paying Customer」として設定されている。",
+      },
+      {
+        file: "P7-5.png",
+        description:
+          "顧客作成画面。山田花子さんを新規顧客として登録し、ビタミンCを購読している例。さらにビタミンD付録の追加も可能であり、田中一郎さんが購読料金を負担する「Associate Customer」として設定されている。",
+      },
+      {
+        file: "P7-6.png",
+        description:
+          "雑誌サービス詳細画面。ビタミンD付録の情報を表示しており、作成時に設定した週額700円が反映されている。",
+      },
+      {
+        file: "P7-7.png",
+        description:
+          "雑誌サービス詳細画面。山田花子さんの顧客情報を表示しており、作成時に設定したビタミンCおよびビタミンDの購読情報が確認できる。",
+      },
+      {
+        file: "P7-8.png",
+        description:
+          "編集画面。ビタミンD付録の週額料金を700円から400円へ変更している。",
+      },
+      {
+        file: "P7-9.png",
+        description:
+          "編集画面。山田花子さんの顧客情報を更新している例。住所や郵便番号などの登録情報を変更できる。",
+      },
+      {
+        file: "P7-10.png",
+        description:
+          "編集後の雑誌サービス詳細画面。ビタミンD付録の情報を表示しており、週額料金が700円から400円へ変更されたことが確認できる。",
+      },
+      {
+        file: "P7-11.png",
+        description:
+          "編集後の雑誌サービス詳細画面。山田花子さんの顧客情報を表示しており、編集画面で変更した住所や郵便番号などの情報が反映されている。",
+      },
+    ]),
     github: "https://github.com/YOUR_USERNAME/project-8",
   },
   {
@@ -330,8 +522,19 @@ const PROJECTS = [
     ],
     grade: "85点（優）",
     tags: ["独自開発", "C", "UNIX"],
-    image: "images/project-07.jpg",
-    images: createProjectImages("images/project-07.jpg"),
+    image: projectThumbnailPath(8, "P8-2.png"),
+    images: createCarouselMediaFromFolder(8, [
+      {
+        file: "P8-1.png",
+        description:
+          "ロガープログラムによって収集したメモリアドレス情報をCSV形式で整理した結果。関数、グローバル変数、ヒープ領域、スタック領域など、さまざまな要素の配置情報を確認できる。",
+      },
+      {
+        file: "P8-2.png",
+        description:
+          "収集したデータを基に作成したメモリマップ。色分けによって仮想メモリ上の各領域を可視化しており、同種のデータが近接して配置されている様子や、テキスト領域、データ領域、ヒープ領域、スタック領域などの構造を確認できる。",
+      },
+    ]),
     github: "https://github.com/YOUR_USERNAME/project-7",
   },
   {
@@ -363,8 +566,29 @@ const PROJECTS = [
     ],
     grade: "93点（秀）",
     tags: ["独自開発", "HTML", "CSS", "JavaScript"],
-    image: "images/project-09.jpg",
-    images: createProjectImages("images/project-09.jpg"),
+    image: projectThumbnailPath(9, "P9-1.png"),
+    images: createCarouselMediaFromFolder(9, [
+      {
+        file: "P9-1.png",
+        description:
+          "Webサイトのトップページ。氏名、電話番号、生年月日、趣味などの情報を入力し、サーバーへ送信できる。入力ルールや電話番号の形式に関する説明も併せて表示している。",
+      },
+      {
+        file: "P9-2.png",
+        description:
+          "JavaScriptによる入力検証とCSSによる視覚的フィードバックの例。未入力項目を検出すると送信を防止し、該当項目を赤枠で強調表示している。",
+      },
+      {
+        file: "P9-3.png",
+        description:
+          "JavaScriptによる日付検証の例。2002年2月29日は存在しない日付であるため、うるう年判定を含む検証処理によって無効な入力として検出している。",
+      },
+      {
+        file: "P9-4.png",
+        description:
+          "入力内容が正常に検証され、大学が運用するサーバーへ送信された例。2004年2月29日はうるう年のため有効な日付として判定され、送信された情報がサーバー上で表示されている。",
+      },
+    ]),
     github: "https://github.com/YOUR_USERNAME/project-9",
   },
 ];

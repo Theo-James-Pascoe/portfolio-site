@@ -122,9 +122,15 @@
                   class="modal__image"
                   src=""
                   alt=""
-                  width="800"
-                  height="450"
                 />
+                <video
+                  id="modal-video"
+                  class="modal__video"
+                  muted
+                  playsinline
+                  preload="metadata"
+                  hidden
+                ></video>
                 <span class="modal__image-zoom-icon" aria-hidden="true">
                   <svg
                     class="modal__image-zoom-icon-svg"
@@ -153,6 +159,27 @@
                       stroke="currentColor"
                       stroke-width="2"
                       stroke-linecap="round"
+                    />
+                  </svg>
+                </span>
+                <span class="modal__image-play-icon" aria-hidden="true">
+                  <svg
+                    class="modal__image-play-icon-svg"
+                    viewBox="0 0 24 24"
+                    width="28"
+                    height="28"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      fill="rgba(255, 255, 255, 0.92)"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                    />
+                    <path
+                      d="M10 8.2v7.6l6.4-3.8L10 8.2z"
+                      fill="currentColor"
                     />
                   </svg>
                 </span>
@@ -223,6 +250,13 @@
             src=""
             alt=""
           />
+          <video
+            id="image-lightbox-video"
+            class="image-lightbox__video"
+            controls
+            playsinline
+            hidden
+          ></video>
           <p id="image-lightbox-caption" class="image-lightbox__caption"></p>
         </div>
       </div>

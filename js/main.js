@@ -6,6 +6,7 @@
 
   const modal = document.getElementById("project-modal");
   const modalImage = document.getElementById("modal-image");
+  const modalVideo = document.getElementById("modal-video");
   const modalTags = document.getElementById("modal-tags");
   const modalTitle = document.getElementById("modal-title");
   const modalSections = document.getElementById("modal-sections");
@@ -38,7 +39,9 @@
 
   const imageLightbox = document.getElementById("image-lightbox");
   const imageLightboxImg = document.getElementById("image-lightbox-img");
+  const imageLightboxVideo = document.getElementById("image-lightbox-video");
   const imageLightboxCaption = document.getElementById("image-lightbox-caption");
+  const imageLightboxDialog = imageLightbox?.querySelector(".image-lightbox__dialog");
 
   const projectById = new Map(PROJECTS.map((p) => [p.id, p]));
   let lastFocusedElement = null;
@@ -285,6 +288,32 @@
     }
   }
 
+  function isVideoSlide(slide) {
+    return (
+      slide?.type === "video" ||
+      /\.(mp4|webm|ogg)(\?.*)?$/i.test(slide?.src || "")
+    );
+  }
+
+  function pauseVideo(video) {
+    if (!video) return;
+    video.pause();
+    try {
+      video.currentTime = 0;
+    } catch (_error) {
+      /* ignore seek errors while metadata is loading */
+    }
+  }
+
+  function resetVideoElement(video) {
+    if (!video) return;
+    pauseVideo(video);
+    video.removeAttribute("src");
+    video.load();
+    video.hidden = true;
+    video.setAttribute("hidden", "");
+  }
+
   function setupImageFallback(img, project) {
     img.onerror = () => {
       img.onerror = null;
@@ -328,10 +357,29 @@
       ((index % images.length) + images.length) % images.length;
     const slide = images[carouselIndex];
     const hasMultiple = images.length > 1;
+    const isVideo = isVideoSlide(slide);
+    const mediaLabel = isVideo ? "動画" : "画像";
 
-    modalImage.src = slide.src;
-    modalImage.alt = `${activeModalProject.title}のスクリーンショット（${carouselIndex + 1}/${images.length}）`;
-    setupImageFallback(modalImage, activeModalProject);
+    pauseVideo(modalVideo);
+
+    if (isVideo && modalVideo) {
+      modalImage.hidden = true;
+      modalImage.setAttribute("hidden", "");
+      modalVideo.hidden = false;
+      modalVideo.removeAttribute("hidden");
+      modalVideo.src = slide.src;
+      modalVideo.load();
+      modalImageOpen?.classList.add("is-video");
+    } else {
+      resetVideoElement(modalVideo);
+      modalImage.hidden = false;
+      modalImage.removeAttribute("hidden");
+      modalImage.src = slide.src;
+      modalImage.alt = `${activeModalProject.title}のスクリーンショット（${carouselIndex + 1}/${images.length}）`;
+      setupImageFallback(modalImage, activeModalProject);
+      modalImageOpen?.classList.remove("is-video");
+    }
+
     modalImageCaption.textContent =
       slide.description || DEFAULT_IMAGE_DESCRIPTION;
 
@@ -341,31 +389,35 @@
     renderCarouselDots(images.length, carouselIndex);
 
     if (modalCarouselStatus) {
-      modalCarouselStatus.textContent = `画像 ${carouselIndex + 1} / ${images.length}`;
+      modalCarouselStatus.textContent = `${mediaLabel} ${carouselIndex + 1} / ${images.length}`;
     }
 
     if (modalImageOpen) {
       modalImageOpen.setAttribute(
         "aria-label",
         hasMultiple
-          ? `画像を拡大表示（${carouselIndex + 1}/${images.length}）`
-          : "画像を拡大表示"
+          ? `${mediaLabel}を拡大表示（${carouselIndex + 1}/${images.length}）`
+          : `${mediaLabel}を拡大表示`
       );
     }
   }
 
-  function lockCaptionAreaHeight(project) {
+  function getCaptionAreaReferenceText() {
+    const referenceProject = projectById.get(9);
+    if (!referenceProject) return DEFAULT_IMAGE_DESCRIPTION;
+
+    const images = getProjectImages(referenceProject);
+    return images[0]?.description || DEFAULT_IMAGE_DESCRIPTION;
+  }
+
+  function lockCaptionAreaHeight() {
     if (!modalImageCaptionWrap || !modalImageCaption) return;
 
     modalImageCaptionWrap.style.height = "";
     modalImageCaptionWrap.style.minHeight = "";
 
-    const images = getProjectImages(project);
-    const firstDescription =
-      images[0]?.description || DEFAULT_IMAGE_DESCRIPTION;
     const currentDescription = modalImageCaption.textContent;
-
-    modalImageCaption.textContent = firstDescription;
+    modalImageCaption.textContent = getCaptionAreaReferenceText();
     const height = Math.ceil(modalImageCaption.getBoundingClientRect().height);
 
     modalImageCaptionWrap.style.height = `${height}px`;
@@ -377,6 +429,36 @@
     activeModalProject = project;
     carouselIndex = 0;
     setCarouselSlide(0);
+  }
+
+  function isVideoSource(src) {
+    return /\.(mp4|webm|ogg)(\?.*)?$/i.test(src || "");
+  }
+
+  function renderCardThumbnail(project) {
+    const label = `${escapeHtml(project.title)}のスクリーンショット`;
+
+    if (isVideoSource(project.image)) {
+      return `
+        <video
+          class="project-card__image project-card__video"
+          src="${escapeHtml(project.image)}"
+          muted
+          playsinline
+          preload="metadata"
+          aria-label="${label}"
+        ></video>
+      `;
+    }
+
+    return `
+      <img
+        class="project-card__image"
+        src="${escapeHtml(project.image)}"
+        alt="${label}"
+        loading="lazy"
+      />
+    `;
   }
 
   function createCard(project) {
@@ -394,14 +476,7 @@
         <ul class="project-card__media-tags" aria-label="使用技術">
           ${mediaTagsHtml}
         </ul>
-        <img
-          class="project-card__image"
-          src="${escapeHtml(project.image)}"
-          alt="${escapeHtml(project.title)}のスクリーンショット"
-          loading="lazy"
-          width="800"
-          height="450"
-        />
+        ${renderCardThumbnail(project)}
       </div>
       <div class="project-card__body">
         <h2 class="project-card__title">${escapeHtml(project.title)}</h2>
@@ -416,7 +491,10 @@
       </div>
     `;
 
-    setupImageFallback(card.querySelector(".project-card__image"), project);
+    const thumbnail = card.querySelector(".project-card__image");
+    if (thumbnail && thumbnail.tagName === "IMG") {
+      setupImageFallback(thumbnail, project);
+    }
     return card;
   }
 
@@ -506,7 +584,7 @@
     modal.setAttribute("aria-hidden", "false");
     document.body.classList.add("modal-open");
 
-    lockCaptionAreaHeight(project);
+    lockCaptionAreaHeight();
 
     modal.querySelector(".modal__close").focus();
   }
@@ -531,15 +609,47 @@
       modalImageCaptionWrap.style.height = "";
       modalImageCaptionWrap.style.minHeight = "";
     }
+
+    resetVideoElement(modalVideo);
+    if (modalImage) {
+      modalImage.hidden = false;
+      modalImage.removeAttribute("hidden");
+    }
+    modalImageOpen?.classList.remove("is-video");
   }
 
   function openImageLightbox() {
-    if (!imageLightbox || !imageLightboxImg || !modalImage || modal.hidden) return;
+    if (!imageLightbox || !modalImage || modal.hidden || !activeModalProject) return;
 
+    const images = getProjectImages(activeModalProject);
+    const slide = images[carouselIndex];
+    if (!slide) return;
+
+    const isVideo = isVideoSlide(slide);
     lastImageLightboxFocusedElement = document.activeElement;
 
-    imageLightboxImg.src = modalImage.src;
-    imageLightboxImg.alt = modalImage.alt;
+    if (isVideo && imageLightboxVideo) {
+      imageLightboxImg.hidden = true;
+      imageLightboxImg.setAttribute("hidden", "");
+      imageLightboxVideo.hidden = false;
+      imageLightboxVideo.removeAttribute("hidden");
+      imageLightboxVideo.src = slide.src;
+      imageLightboxVideo.load();
+      if (imageLightboxDialog) {
+        imageLightboxDialog.setAttribute("aria-label", "拡大動画");
+      }
+      imageLightboxVideo.play().catch(() => {});
+    } else if (imageLightboxImg) {
+      resetVideoElement(imageLightboxVideo);
+      imageLightboxImg.hidden = false;
+      imageLightboxImg.removeAttribute("hidden");
+      imageLightboxImg.src = modalImage.src;
+      imageLightboxImg.alt = modalImage.alt;
+      if (imageLightboxDialog) {
+        imageLightboxDialog.setAttribute("aria-label", "拡大画像");
+      }
+    }
+
     if (imageLightboxCaption) {
       imageLightboxCaption.textContent = modalImageCaption.textContent;
     }
@@ -553,6 +663,12 @@
 
   function closeImageLightbox() {
     if (!imageLightbox || imageLightbox.hidden) return;
+
+    resetVideoElement(imageLightboxVideo);
+    if (imageLightboxImg) {
+      imageLightboxImg.hidden = false;
+      imageLightboxImg.removeAttribute("hidden");
+    }
 
     imageLightbox.hidden = true;
     imageLightbox.setAttribute("aria-hidden", "true");
